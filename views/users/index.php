@@ -8,7 +8,7 @@
                     <h3 class="title"><b>Login</b></h3>
                 </div>
                 <div class="content">
-                    <form method="POST">
+                    <form action="" method="post">
                         
                         <input id="form-token" type="hidden" name="<?= Yii::$app->request->csrfParam ?>"
                                value="<?= Yii::$app->request->csrfToken ?>"/>

@@ -4,19 +4,19 @@ namespace app\controllers;
 
 use yii\web\Controller;
 use app\models\Users;
-use app\models\Api;
+use app\models\Users_permission;
 
 class UsersController extends Controller {
 
     public function actionIndex() {
         if (Users::IsLogin())
-            return $this->redirect('dashboard/index');
-
+            return $this->redirect(['dashboard/index']);
+ 
         if ($input = \Yii::$app->request->post()) {
 
 
             if (isset($input["username"]) && isset($input["password"])) {
-
+               
                 /* Login. */
                 $model = Users::Login([
                             'username' => $input["username"],
@@ -37,7 +37,7 @@ class UsersController extends Controller {
         if (!Users::IsLogin())
             return $this->goHome();
 
-        if (!Users::IsPromisesEditUsers())
+        if (!Users_permission::IsPromisesEditUsers())
             return $this->goBack();
 
         $id = isset($_GET['id']) ? $_GET['id'] : [];
@@ -45,10 +45,11 @@ class UsersController extends Controller {
         if (\Yii::$app->request->post()) {
             if (isset($_POST['submit'])) {
                 if (strtolower('save') == strtolower($_POST['submit'])) {
-                    
+
                     $status['submit'] = ['save' => 'ok'];
+                    Users::updateUser($_POST);
                 } else if (strtolower('delete') == strtolower($_POST['submit'])) {
-                    
+
                     $status['submit'] = ['delete' => 'ok'];
                 }
 
@@ -57,11 +58,11 @@ class UsersController extends Controller {
         }
 
         if ($id) {
-            $json = Api::http_response('http://127.0.0.1/api/v1/administrator/user.php?token_api=ABC&id=' . $id);
+            $user = Users::getUserById($id);
         }
-
+        
         return $this->render('edit', [
-                    'user' => json_decode($json),
+                    'user' => $user[0],
                     'status' => $status,
         ]);
     }

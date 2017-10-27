@@ -15,41 +15,30 @@ class Users {
         return Api::getDataBySql('SELECT * FROM users AS u ');
     }
 
+    public static function updateUser($data) {
+        if (isset($data['id']) && isset($data['first_name']) && isset($data['last_name']) && isset($data['email'])) {
+            $sql = sprintf('UPDATE  users AS u SET  u.first_name =  "%s",u.last_name =  "%s",u.email =  "%s" WHERE  id ="%d"', $data['first_name'], $data['last_name'], $data['email'], $data['id']);
+            Api::getDataBySql($sql);
+        }
+    }
+
     public static function Login($data) {
 
-        $users = [
-            (object) [
-                'id' => '1',
-                'username' => 'admin',
-                'password' => 'admin',
-                'authKey' => 'test100key',
-                'accessToken' => '1ABCDEFG',
-                'promises' => 12,
-            ],
-            (object) [
-                'id' => '2',
-                'username' => 'demo',
-                'password' => 'demo',
-                'authKey' => 'test101key',
-                'accessToken' => '2ZCZVCCBZB',
-                'promises' => 8,
-            ],
-        ];
-
-        /* Check Variable Ok. */
         if (isset($data['username']) && isset($data['password'])) {
 
-
-            /* Get data By APi. */ /*             * * MOC DATA ** */
-            $user = $users[0];
-
-            /* Set Data User to Sestion. */
-            $_SESSION['user'] = (object) [
-                        'id' => $user->id,
-                        'id' => $user->username,
-                        'promises' => $user->promises,
-            ];
-
+            $sql = sprintf('SELECT * FROM users WHERE email = "%s" && password = "%s"', $data['username'], $data['password']);
+            $user = Api::getDataBySql($sql);
+           
+            
+            if (!empty($user) && isset($user[0])) {
+                 $user = $user[0];
+                /* Set Data User to Sestion. */
+                $_SESSION['user'] = [
+                    'id' => $user->id,
+                    'email' => $user->email,
+                    'permission' => $user->users_permission,
+                ];
+            }
             return TRUE;
         }
         return FALSE;
@@ -63,35 +52,7 @@ class Users {
 
     public static function IsLogin() {
 
-        return isset($_SESSION['user']->id) ? $_SESSION['user']->id : FALSE;
-    }
-
-    public static function IsUser() {
-        $promises = isset($_SESSION['user']->promises) ?
-                $_SESSION['user']->promises : [];
-        return (($promises & 1 ) == 1);
-    }
-
-    public static function IsManager() {
-        $promises = isset($_SESSION['user']->promises) ?
-                $_SESSION['user']->promises : [];
-        return (($promises & 2 ) == 2);
-    }
-
-    public static function IsAdmin() {
-        $promises = isset($_SESSION['user']->promises) ?
-                $_SESSION['user']->promises : [];
-        return (($promises & 4 ) == 4);
-    }
-
-    public static function IsSuperAdmin() {
-        $promises = isset($_SESSION['user']->promises) ?
-                $_SESSION['user']->promises : [];
-        return (($promises & 8 ) == 8);
-    }
-
-    public static function IsPromisesEditUsers() {
-        return Users::IsAdmin();
+        return isset($_SESSION['user']['id']) ? $_SESSION['user']['id'] : FALSE;
     }
 
 }

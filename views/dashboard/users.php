@@ -28,11 +28,10 @@
             <th>#</th>
             <th>
                 <a href="/dashboard/users&username=desc"><i class="fa fa-sort-desc" aria-hidden="true"></i></a>
-                Username
+                Email
             </th>
             <th>Name</th>
-            <th>Email</th>
-            <th>Address</th>
+            <th>Permission</th>
             <?php if ($IsPromisesEditUsers) { ?>
                 <th>Edit</th>
             <?php } ?>
@@ -41,15 +40,15 @@
     <tbody>
 
         <?php
-        if (isset($users->data))
-            foreach ($users->data as $key => $values) {
+
+        if (isset($users))
+            foreach ($users as $key => $values) {
                 ?> 
                 <tr>
                     <td><?= $values->id ?></td>
-                    <td><?= $values->username ?></td>
-                    <td><?= $values->first_name . $values->last_name ?></td>
-                    <td><?= $values->email[0] ?></td>
-                    <td><?= $values->address[0] ?></td>
+                    <td><?= $values->email ?></td>
+                    <td><?= $values->first_name .' '. $values->last_name ?></td>
+                    <td><?= $values->users_permission ?></td>
 
         <?php if ($IsPromisesEditUsers) { ?>
                         <td>

@@ -50,7 +50,7 @@ class Api {
                     'sql' => $sql
         ]);
         
-        return $model->data;
+        return isset($model->data) ? $model->data : $model;
     }
 
 }

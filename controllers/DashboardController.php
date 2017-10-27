@@ -3,7 +3,7 @@
 namespace app\controllers;
 
 use yii\web\Controller;
-use app\models\Api;
+use app\models\Users_permission;
 use app\models\Users;
 use yii\helpers\Url;
 
@@ -13,8 +13,13 @@ class DashboardController extends Controller {
         if (!Users::IsLogin())
             return $this->goHome();
 
+        $url_buttonUsers = Url::to(['dashboard/users']);
 
-        return $this->render('index');
+        $url ['url_buttonUsers'] = $url_buttonUsers;
+
+        return $this->render('index', [
+                    'url' => $url
+        ]);
     }
 
     public function actionUsers() {
@@ -40,16 +45,13 @@ class DashboardController extends Controller {
         if (\Yii::$app->request->get()) {
             
         }
-        $users = Users::getUsers(); 
-        var_dump($users); 
-        $json = Api::http_response('http://127.0.0.1/api/v1/administrator/users.php?token_api=ABC&limit_offset=1&limit_count=1&sort=DESC');
-
-        //var_dump(Users::IsSuperAdmin());
-
+        $users = Users::getUsers();
+        foreach ($users as $values)
+            $values->users_permission = Users_permission::PermissionDetail($values->users_permission);
 
         return $this->render('users', [
-                    'users' => json_decode($json),
-                    'IsPromisesEditUsers' => Users::IsPromisesEditUsers(),
+                    'users' => $users,
+                    'IsPromisesEditUsers' => Users_permission::IsPromisesEditUsers(),
                     'url' => $url,
         ]);
     }
